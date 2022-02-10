@@ -16,21 +16,8 @@ bool Read_button(int pin)           //return High if a button is pressed for two
 {
   if(digitalRead(pin) == HIGH)      //check if the button is pressed
     {
-      delay(2000);                  //wait 2 seconds
+      delay(2500);                  //wait 2,5 seconds
       if(digitalRead(pin) == HIGH)  //check if it is still the case
-      {
-        return(HIGH);
-      }
-    }
-    return(LOW);
-}
-
-bool Read_Calibration_Button()
-{
-  if(digitalRead(Button_Calibration) == HIGH)
-    {
-      delay(2000);
-      if(digitalRead(Button_Calibration) == HIGH)
       {
         return(HIGH);
       }
@@ -82,8 +69,9 @@ void loop()
   
   Button_Calibration_state = Read_button(Button_Calibration);
   //if else or while ? 
-  while(Button_Calibration_state)
+  while(Button_Calibration_state)         //Pressed the button for 2.5seconds -> calibration starts. Repressed this button to end the loop
   {
+    Button_Calibration_state = LOW;       //Once the button is pressed we need to set it low. The idea is: we calibrate if user press the button, if he repressed the button it means the calibration is over. So once we enter the calibration we set ti to low, we re read the button at the end of the while loops to see if the calibration continues or not.
     digitalWrite(LED, HIGH);              //turn on LED to show that calibration is running
     Calibration();
     Button_Calibration_state = Read_button(Button_Calibration);
