@@ -82,9 +82,14 @@ void Action() //for the moment, let's just check if it is working properly
 void setup() 
 {
   // Set Servos
-  servo_alpha.attach(potpin_alpha);  
-  servo_beta.attach(potpin_beta);  
-  servo_gama.attach(potpin_gama); 
+  servo_alpha.attach(servo_pin_alpha);  
+  servo_beta.attach(servo_pin_beta);  
+  servo_gama.attach(servo_pin_gama); 
+  
+  
+  pinMode(servo_pin_alpha, INPUT);
+  pinMode(servo_pin_beta, INPUT);
+  pinMode(servo_pin_gama, INPUT);
   
   pinMode(Button_Calibration, INPUT);
   pinMode(Button_Action, INPUT);
