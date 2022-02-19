@@ -56,7 +56,77 @@ void Calibration()
   
 }
 
-void Action() //for the moment, let's just check if it is working properly
+
+// ===================================== action & poses =====================================
+
+void pose_home()// home position
+{
+  servo_alpha.write(alpha_0);
+  servo_beta.write(beta_0);
+  servo_gama.write(gama_0);
+}
+
+void pose_1()
+{
+  servo_alpha.write(alpha_0 - 45);
+  servo_beta.write(beta_0);
+  servo_gama.write(gama_0);
+}
+
+
+void pose_2()
+{
+  servo_alpha.write(alpha_0 - 45);
+  servo_beta.write(beta_0 - 30);
+  servo_gama.write(gama_0 - 20);
+}
+
+// Other side 
+
+void pose_11() // opposite
+{
+  servo_alpha.write(alpha_0 + 45);
+  servo_beta.write(beta_0);
+  servo_gama.write(gama_0);
+}
+
+// Gripper
+void pick()
+{
+  //nothing for the moment, basicly we want to set the other servos to grip somthing
+}
+
+void drop()
+{
+  //nothing for the moment, set the servos to drop
+}
+
+
+void Action()
+{
+  pose_home();
+  delay(1000);
+
+  pose_1();
+  delay(1000);
+
+  pose_2();
+  delay(1000);
+  pick();
+
+  pose_1();
+  delay(1000);
+
+  pose_home();
+  delay(1000);
+
+  pose_11();
+  delay(1000);
+  drop();
+
+}
+
+void Action_test() //for the moment, let's just check if it is working properly
 {
   servo_alpha.write(alpha_0 - 35);
   delay(500);
