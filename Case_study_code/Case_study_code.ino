@@ -1,7 +1,10 @@
 #include <Servo.h>
 
-Servo servo_alpha, servo_beta, servo_gama; // create servo object to control a servo
+#define   M_PI   3.14159265358979323846 /* pi */
 
+
+// ============= Program variables =============
+Servo servo_alpha, servo_beta, servo_gama; // create servo object to control a servo
 const int potpin_alpha = A0;  // analog pin used to connect the potentiometer
 const int potpin_beta  = A1;  // analog pin used to connect the potentiometer
 const int potpin_gama  = A2;  // analog pin used to connect the potentiometer
@@ -90,6 +93,30 @@ void pose_11() // opposite
   servo_gama.write(gama_0);
 }
 
+void pose(int *direct_model)
+{
+  /*
+  Write the inverse kinematic equation : 
+  alpha = ... direct_model[0] ou x = direct_model[0]...
+  beta  = ...
+  
+  alpha = atan2(direct_model[1], direct_model[0]); // atan2(y,x) == arctan(y/x)
+  beta  = asin((direct_model[2] + d)/(l1 + l2));
+  gama  = log(direct_model[3]/sin(alpha))*M_PI;// log(x) = ln(x); //might be worng, but there is another solution
+  
+  */
+
+}
+void action_equation()
+{
+  /*
+
+  servo_alpha.write(alpha + alpha_0);
+  servo_beta.write(beta + beta_0);
+  servo_gama.write(gama + gama_0);
+  
+  */
+}
 // Gripper
 void pick()
 {
