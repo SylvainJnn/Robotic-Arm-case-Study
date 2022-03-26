@@ -188,7 +188,7 @@ void pose(float *direct_model)//takes an array
   q2  = compute_q2(r3, z3, l1, l2, q3);
 
   q2 = q2 + M_PI/2; //add offset
-  q4 = phi - (q2+q3));
+  q4 = phi - (q2+q3);
 
   //if (q4 > 180)//for the limit but i don't think we need it now
   //  q4 = 360 - q4;
@@ -313,7 +313,9 @@ void loop()
 
     
     delay(5000);
-        Action_test();
+    directmodel[0] = 0.1 ;
+    directmodel[1] = 0 ;
+    directmodel[2] = 0.15 ;
     
     digitalWrite(LED, HIGH); 
     delay(5000);
