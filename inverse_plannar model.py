@@ -49,7 +49,6 @@ def compute_q3(phi, q1, q2):
 
 #=============
 def q20(x,y,l1,l2):#compte second angle
-    print(x,y , l1, l2)
     numerator1 = x**2 + y**2
     numerator2 = l1**2 + l2**2
     denominator = 2 * l1* l2
@@ -62,34 +61,19 @@ def q10(x,y,l1,l2,q2):#compute first angle
     b = np.arctan2(b_numerator, b_denominator)
     print(a,b)
     return(a + b)
-"""
-#parameters
-#x y position
-x = 0
-y = 1
-#arm lengths
-l1 = 1
-l2 = 1
 
 
-beta = q20(x,y,l1,l2)
-alpha = q10(x,y,l1,l2, beta)
-alpha = alpha - np.pi/2 # dunno, but if we want the first one set as the unit cercle we have to do this
-
-print(alpha, beta)
-print(np.degrees(alpha), np.degrees(beta))
-"""
 print("==========")
 print("==========")
 print("le MIEN")
 
-x = 0.2
-y = 0.1
+x = 2.5
+y = 0.5
 phi = compute_phi(x)
 #arm lengths
-l1 = 0.1
-l2 = 0.1
-l3 = 0.15
+l1 = 1
+l2 = 1
+l3 = 1
 
 workspace_edge = ((x-1)**2 + y**2)**0.5#bad anmes
 arm_edge = l1+l2
@@ -98,23 +82,56 @@ if(workspace_edge >arm_edge):
 
 x3 = compute_r3(x, l3, phi)
 y3 = compute_z3(y, l3, phi)
-print("les 3: ", x3, y3)
-
+print("les 3: ")
+print(x , y)
+print(x3, y3)
+print("====")
 q2 = q20(x3,y3,l1,l2)
 lim = False
 if lim == True:
     if(q2 <-np.pi/2):
         q2 =-np.pi/2 
 q1 = q10(x3,y3,l1,l2, q2)
-#q1 = q1 - np.pi/2 # dunno, but if we want the first one set as the unit cercle we have to do this
-q1 = -q1
+q1 = q1 + np.pi/2 # dunno, but if we want the first one set as the unit cercle we have to do this
+#q1 = -q1
 if lim == True:
     if(q1 > np.pi/2):
         q1 = np.pi/2
 q3 = phi - (q1+q2)
 
+print("angles")
 print(q1, q2, q3)
 print(np.degrees(q1), np.degrees(q2),np.degrees(q3))
+
+
+print(180 + np.degrees(q2))
+print(180 + np.degrees(q3))
+
+
+print("====")
+print("====")
+print("====")
+
+
+
+
+
+
+
+#parameters
+#x y position
+x = x - l3
+#arm lengths
+l1 = 1
+l2 = 1
+
+
+q2 = q20(x,y,l1,l2)
+q1 = q10(x,y,l1,l2, q2)
+q1 = q1 + np.pi/2 # dunno, but if we want the first one set as the unit cercle we have to do this
+print("yo")
+print(q1, q2)
+print(np.degrees(q1), np.degrees(q2))
 
 
 """

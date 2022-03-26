@@ -186,11 +186,24 @@ void pose(float *direct_model)//takes an array
   
   q3  = compute_q3(r3, z3, l1, l2);
   q2  = compute_q2(r3, z3, l1, l2, q3);
-  q4 = M_PI/2 - (phi - (q2+q3));
-  if (q4 > 180)
-    q4 = 360 - q4;
+
+  q2 = q2 + M_PI/2; //add offset
+  q4 = phi - (q2+q3));
+
+  //if (q4 > 180)//for the limit but i don't think we need it now
+  //  q4 = 360 - q4;
+
   
-  action_equation(q1, -q2, -q3, q4);//I feel like something is wrong with q2 but for q3 it is the way i foud to have a positive value 
+  if(q2 <0)
+    q2 = -q2; // I don't know how to handle this properly yet but at least if the value is negative, we change it to positive
+
+  //pass q to angles
+  q1 = q1 * 180/M_PI;
+  q2 = q2 * 180/M_PI;
+  q2 = q2 * 180/M_PI;
+  q2 = q2 * 180/M_PI;
+  
+  action_equation(q1, q2, q3, q4);//I feel like something is wrong with q2 but for q3 it is the way i foud to have a positive value 
 
 }
 
