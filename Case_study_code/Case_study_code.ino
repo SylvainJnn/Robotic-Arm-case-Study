@@ -11,7 +11,7 @@ const int potpin_gama  = A2;  // analog pin used to connect the potentiometer
                    
 const int servo_pin_alpha = 9;
 const int servo_pin_beta  = 3;
-const int servo_pin_gama  = 4;
+const int servo_pin_gama  = 6;
 const int servo_pin_q4  = 5;
 
 const int LED = 11;
@@ -19,7 +19,7 @@ const int Button_Calibration = 12; // ASK for Switch --> easier to implemant
 const int Button_Action = 13;
 
 
-float d = 0.3;
+float d = 0.03;
 float l1 = 0.1;
 float l2 = 0.1;
 float l3 = 0.15;
@@ -69,7 +69,6 @@ void Calibration()
 
 
 // ===================================== action & poses =====================================
-
 void pose_home()// home position
 {
   servo_alpha.write(alpha_0);
@@ -77,83 +76,69 @@ void pose_home()// home position
   servo_gama.write(gama_0);
 }
 
-void pose_1()
-{
-  servo_alpha.write(alpha_0 - 45);
-  servo_beta.write(beta_0);
-  servo_gama.write(gama_0);
-}
-
-
-void pose_2()
-{
-  servo_alpha.write(alpha_0 - 45);
-  servo_beta.write(beta_0 - 30);
-  servo_gama.write(gama_0 - 20);
-}
-
-// Other side 
-
-void pose_11() // opposite
-{
-  servo_alpha.write(alpha_0 + 45);
-  servo_beta.write(beta_0);
-  servo_gama.write(gama_0);
-}
-// =============================================
-
 float compute_phi(float x)
 {
-  if(x>0)
+  if(x>=0)
     return(0);
   return(-M_PI);
 }
 
-float compute_r3(float r,float  l3,float phi)
+float compute_r3(float r, float l3, float phi)
 {//check
-    return(r-l3*cos(phi));
+    return(r-l3*cosf(phi));
 }    
-float compute_z3(float z,float  l3,float phi)
+float compute_z3(float z, float l3, float phi)
 {//check
-    return(z-l3*sin(phi));
+    return(z-l3*sinf(phi));
 }    
 
 float compute_q3(float r,float z,float l1,float l2)
 {
   float numerator1, numerator2, denominator;
-
+  
   numerator1 =(float)(r*r + z*z);
   numerator2 = l1*l1 + l2*l2;
   denominator = 2 * l1 * l2;
-  return(-acos((numerator1 - numerator2) / (denominator)));
+  
+  return(-acosf((numerator1 - numerator2) / (denominator)));
 }
 
 
 float compute_q2(float r,float z,float l1,float l2, float q3)
 {
   float a,b_numerator,b_denominator,b;
-  a = atan2(z,r);
-  b_numerator = l2*sin(q3);//change it to q3
-  b_denominator = l1 + l2*cos(q3);
-  b = atan2(b_numerator, b_denominator);
-  //print(a,b);
-  return(a + b -M_PI/2); // to have origin on s axis we have to change it from 90 degrees, i don't know why // maybesomething wrong here too
+  
+  a = atan2f(z,r);
+  b_numerator = l2*sinf(q3);//change it to q3
+  b_denominator = l1 + l2*cosf(q3);
+  b = atan2f(b_numerator, b_denominator);
+  
+  return(a + b +M_PI/2); // to have origin on s axis we have to change it from 90 degrees, i don't know why // maybesomething wrong here too
 }
 
 
 void action_equation(float q1, float q2, float q3, float q4)// write
 {
   
-
-  servo_alpha.write(q1 + alpha_0);
+  Serial.println("angles");
+  Serial.println(q1);
+  Serial.println(q2);
+  Serial.println(q3);
+  Serial.println(q4);
+  
+  
+  //Serial.println("q1");
+  servo_alpha.write(q1 +alpha_0);
   delay(1000);
-  servo_beta.write(q2 + beta_0);
+  //Serial.println("q2");
+  servo_beta.write(q2 +beta_0);
   delay(1000);
+  //Serial.println("q3");
   servo_gama.write(q3 + gama_0);
   delay(1000);
-  servo_q4.write(q4 + q4_0);
+  //Serial.println("q4");
+  servo_q4.write(q4 +q4_0);
   delay(1000);
-  
 }
 
 
@@ -176,18 +161,22 @@ void pose(float *direct_model)//takes an array
   float y = direct_model[1];
   float z = direct_model[2] - d;//take off the d from DH parameter
   float phi = compute_phi(x); //in our case phi is always 0
-
-  float r =(float) sqrt(x*x + y*y); //I don't know how to decreibe it yes baisicly, in this on this is line that the planer is based
-
-  q1 = atan2(y,x); // atan2(z,x) == arctan(z/x);
+  Serial.println("x and y");
+  Serial.println(x);
+  Serial.println(y);
+  float r =(float) sqrt(sq(x) + sq(y)); //I don't know how to decreibe it yes baisicly, in this on this is line that the planer is based
+  Serial.println(r);
+  q1 = atan2f(y,x); // atan2(z,x) == arctan(z/x);
   float r3, z3;
   r3 = compute_r3(r, l3, phi);//this is position of servo4
   z3 = compute_z3(z, l3, phi);
-  
+  Serial.println("r3 and z3");
+  Serial.println(r3);
+  Serial.println(z3);
   q3  = compute_q3(r3, z3, l1, l2);
   q2  = compute_q2(r3, z3, l1, l2, q3);
 
-  q2 = q2 + M_PI/2; //add offset
+  //q2 = q2 + M_PI/2; //add offset
   q4 = phi - (q2+q3);
 
   //if (q4 > 180)//for the limit but i don't think we need it now
@@ -195,17 +184,22 @@ void pose(float *direct_model)//takes an array
 
   
   if(q2 <0)
-    q2 = -q2; // I don't know how to handle this properly yet but at least if the value is negative, we change it to positive
-
+    q2 = -q2; // the angles is negative in our case, but we want it positive
+  if(q4 <0)
+      q4 = 0; // set at 0 in case if negative // one time i had an issue
   //pass q to angles
+  
   q1 = q1 * 180/M_PI;
   q2 = q2 * 180/M_PI;
-  q2 = q2 * 180/M_PI;
-  q2 = q2 * 180/M_PI;
-  
+  q3 = q3 * 180/M_PI;
+  q4 = q4 * 180/M_PI;
+
+
   action_equation(q1, q2, q3, q4);//I feel like something is wrong with q2 but for q3 it is the way i foud to have a positive value 
 
 }
+
+
 
 // Gripper
 void pick()
@@ -219,50 +213,6 @@ void drop()
 }
 
 
-void Action()
-{
-  pose_home();
-  delay(1000);
-
-  pose_1();
-  delay(1000);
-
-  pose_2();
-  delay(1000);
-  pick();
-
-  pose_1();
-  delay(1000);
-
-  pose_home();
-  delay(1000);
-
-  pose_11();
-  delay(1000);
-  drop();
-
-}
-
-void Action_test() //for the moment, let's just check if it is working properly
-{
-  servo_alpha.write(alpha_0 - 35);
-  delay(500);
-
-  servo_alpha.write(alpha_0 - 35);
-  delay(500);
-
-  servo_alpha.write(alpha_0 + 55);
-  servo_beta.write(beta_0 + 20);
-  delay(500);
-  
-  servo_alpha.write(alpha_0 - 55);
-  servo_beta.write(beta_0 - 20);
-  servo_gama.write(gama_0 + 45);
-  delay(500);
-
-  servo_gama.write(gama_0 - 45);
-  delay(500);
-}
 
 
 
@@ -292,47 +242,42 @@ void loop()
 
   float directmodel[3];
 //save home position (init pose)
-  alpha_0 = servo_alpha.read();
-  beta_0 = servo_beta.read();
-  gama_0 = servo_gama.read();
-  q4_0 = servo_q4.read();
-  
-  delay(500); 
-  while(1)
-  {   
 
-    
-    directmodel[0] = 0 ;
-    directmodel[1] = 0.2 ;
-    directmodel[2] = 0.1 ;
-    digitalWrite(LED, LOW); 
+    Serial.println("POSE 1");
+
+    digitalWrite(LED, LOW);
+    directmodel[0] = l1+l3 ;
+    directmodel[1] = 0;
+    directmodel[2] = d-l2;
+    pose(directmodel);
+    delay(10000); 
+   
+    Serial.println("POSE 2");
+//these 2 poses are "fine"
+    digitalWrite(LED, LOW);
+    directmodel[0] = (l1+l3+l2)*0.9;
+    directmodel[1] = 0;
+    directmodel[2] = d;
+    Serial.println(directmodel[1]);
+    Serial.println(directmodel[2]);
     pose(directmodel);
     
-    Serial.println("POSE 1");
-    
+    delay(10000); 
+Serial.println("POSE 3");
+    digitalWrite(LED, LOW);
+    directmodel[0] = 0;
+    directmodel[1] = (l1+l3+l2)*0.9;
+    directmodel[2] = d;
+    pose(directmodel);
 
     
-    delay(5000);
-    directmodel[0] = 0.1 ;
-    directmodel[1] = 0 ;
-    directmodel[2] = 0.15 ;
-    
-    digitalWrite(LED, HIGH); 
-    delay(5000);
-  }
+    delay(10000);    
+    Serial.println("POSE 4"); 
+    digitalWrite(LED, LOW);
+    directmodel[0] =  0;
+    directmodel[1] = l1+l3;
+    directmodel[2] = d-l2;
+    pose(directmodel);
+    delay(10000); 
   
-/*
-  if(digitalRead(Button_Calibration) == HIGH)
-  {
-    Calibration();  
-    digitalWrite(LED, HIGH);              //turn on LED to show that calibration is running
-      
-  }
-  else
-  {    
-    digitalWrite(LED, LOW);              //turn on LED to show that calibration is running
-    Action();
-  }
-*/
-  delay(1000);                           // waits for the servo to get there
 }
