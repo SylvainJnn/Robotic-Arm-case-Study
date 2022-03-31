@@ -210,7 +210,7 @@ void pose(float *direct_model)//takes an array
   q4 = q4 * 180/M_PI + 80;
 
 
-  action_equation(q1, q2, q3, q4);// move the servos
+  action_equation(0, q2, q3, q4);// move the servos
 
 }
 
