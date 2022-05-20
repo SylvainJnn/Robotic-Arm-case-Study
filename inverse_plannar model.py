@@ -66,14 +66,20 @@ def q10(x,y,l1,l2,q2):#compute first angle
 print("==========")
 print("==========")
 print("le MIEN")
+l1 = 0.1
+l2 = 0.1
+l3 = 0.15
+d = 0.03
 
-x = 2.5
-y = 0.5
+coef =1
+
+xx = 0.00
+xy = (l1+l3+l2)
+
+x = (xx**2 + xy**2)**0.5*coef
+y = (d)*coef
 phi = compute_phi(x)
 #arm lengths
-l1 = 1
-l2 = 1
-l3 = 1
 
 workspace_edge = ((x-1)**2 + y**2)**0.5#bad anmes
 arm_edge = l1+l2
@@ -122,8 +128,7 @@ print("====")
 #x y position
 x = x - l3
 #arm lengths
-l1 = 1
-l2 = 1
+
 
 
 q2 = q20(x,y,l1,l2)
@@ -134,58 +139,8 @@ print(q1, q2)
 print(np.degrees(q1), np.degrees(q2))
 
 
-"""
+
 print("==========")
 print("==========")
-
-
-x = 0
-y = 0
-z = 3
-#arm lengths
-l1 = 1
-l2 = 1
-l3 = 1
-
-phi = np.pi/2
-
-
-
-r = ( x**2 + y**2)**(1/2)
-r3 = compute_r3(r, l3, phi)
-z3 = compute_r3(z, l3, phi)
-
-q2 = compute_q2(r3, z3, l1, l2)
-
-beta = compute_beta(r3, z3)
-gama = compute_gama_sin(q2, r, l2)
-print(gama)
-gama = compute_gama_cos(r3, z3, l1, l2) 
-print(gama)
-
-q1 = compute_q1(beta, gama)
-#q1 = q1_2(r3,z3,l1,l2,q2)
-q1 = q1 
-q3 = compute_q3(phi, q1, q2)
-
-print(q1, q2, q3)
-print(np.degrees(q1), np.degrees(q2), np.degrees(q3))
-print("r z   ",r, z)
-print("r3, z3", r3,z3)
-
-
-
-#i sthink it is wrong
-r_1 = l1*np.cos(q1)
-z_1 = l1*np.sin(q1)
-
-r_2 = l2*np.cos(q2) + r_1
-z_2 = l2*np.sin(q2) + z_1
-
-r_3 = l3*np.cos(q3)+ r_2
-z_3 = l3*np.sin(q3)+ z_2
-
-print("O1 (r,z,q1):", r_1, z_1,q1 )
-print("O2 (r,z,q2):", r_2, z_2,q2)
-print("O3 (r,z,q3):", r_3, z_3,q3 )
-"""
+print("==========")
+print("==========")
